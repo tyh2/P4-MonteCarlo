@@ -124,7 +124,7 @@ void MonteCarloSim::getAnalyticalModel()
 	}
 
 	for(int i = 0; i < numCategories; i++) {
-		if(model >= categoryLow.at(i) && model <= categoryHigh.at(i)) {
+		if(model >= categoryLow.at(i) && model < categoryHigh.at(i)) {
 			rangeIndex = i;
 		}
 	}
@@ -148,7 +148,7 @@ void MonteCarloSim::getSimulationModel()
 	model /= numDays;
 
 	for(int i = 0; i < numCategories; i++) {
-		if(model >= categoryLow.at(i) && model <= categoryHigh.at(i)) {
+		if(model >= categoryLow.at(i) && model < categoryHigh.at(i)) {
 			rangeIndex = i;
 		}
 	}
