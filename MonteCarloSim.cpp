@@ -49,6 +49,9 @@ void MonteCarloSim::readInputs()
 	categoryHigh.resize(numCategories);
 	categoryMeans.resize(numCategories);
 	frequencies.resize(numCategories);
+	occurenceProbabilities.resize(numCategories);
+	cumulativeProbabilities.resize(numCategories);
+
 	for(int i = 0; i < numCategories; i++) {
 		
 		stringstream low(tokens.at(i*3));
@@ -68,9 +71,6 @@ void MonteCarloSim::readInputs()
 		frequencies.at(i) = f;
 	}
 	
-	occurenceProbabilities.resize(numCategories);
-        cumulativeProbabilities.resize(numCategories);
-
         for(int i = 0; i < numCategories; i++) {
                 occurenceProbabilities.at(i) = static_cast<double>(frequencies.at(i))/100;
         }
@@ -114,20 +114,30 @@ void MonteCarloSim::runMCSimulation()
 	outputSimResults();
 }
 
-double MonteCarloSim::getAnalyticalModel()
+void MonteCarloSim::getAnalyticalModel()
 {
 	double model = 0.0;
+	int rangeIndex;
 
 	for(int i = 0; i < numCategories; i++) {
 		model += (occurenceProbabilities.at(i) * categoryMeans.at(i));
 	}
+
+	for(int i = 0; i < numCategories; i++) {
+		if(model >= categoryLow.at(i) && model <= categoryHigh.at(i)) {
+			rangeIndex = i;
+		}
+	}
 	
-	return model;	
+	cout << "Analytical model: " << model;
+       	cout << "  Expected value is between " << categoryLow.at(rangeIndex) << "-" << categoryHigh.at(rangeIndex) << "/" << units;
+	cout << endl;
 }
 
-double MonteCarloSim::getSimulationModel()
+void MonteCarloSim::getSimulationModel()
 {
 	double model = 0.0;
+	int rangeIndex;
 
 	for(int i = 0; i < numDays; i++) {
 
@@ -136,7 +146,16 @@ double MonteCarloSim::getSimulationModel()
 	}
 
 	model /= numDays;
-	return model;
+
+	for(int i = 0; i < numCategories; i++) {
+		if(model >= categoryLow.at(i) && model <= categoryHigh.at(i)) {
+			rangeIndex = i;
+		}
+	}
+
+	cout << "Simulation: " << model;
+       	cout << "  Expected value is between " << categoryLow.at(rangeIndex) << "-" << categoryHigh.at(rangeIndex) << "/" << units;
+	cout << endl;
 }
 
 void MonteCarloSim::outputSimResults()
@@ -149,8 +168,9 @@ void MonteCarloSim::outputSimResults()
 		cout << "\t" << categoryLow.at(i) << "-" << categoryHigh.at(i) << ": " << frequencies.at(i) << endl;
 	}
 
-	cout << "Units of measure: " << units << endl;
+	cout << "Units of measure: " << units << endl << endl;
 
-	cout << "Analytical model: " << getAnalyticalModel();
-	cout << "Simulation: " << getSimulationModel() << endl << endl;
+	getAnalyticalModel();
+	getSimulationModel();
+	cout << endl;
 }

@@ -24,8 +24,8 @@ class MonteCarloSim {
 		MonteCarloSim(string filename);
 		void readInputs();
 		void runMCSimulation();
-		double getAnalyticalModel();
-		double getSimulationModel();
+		void getAnalyticalModel();
+		void getSimulationModel();
 		void outputSimResults();
 
 
